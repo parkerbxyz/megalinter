@@ -1,16 +1,16 @@
 ---
-#########################
-#########################
+#################################
+#################################
 ## Deploy Docker Image Linters ##
-#########################
-#########################
+#################################
+#################################
 # Documentation:
 # https://help.github.com/en/articles/workflow-syntax-for-github-actions
 #
 
-#######################################
+#####################################
 # Start the job on all push to main #
-#######################################
+#####################################
 name: "Build & Deploy - DEV linters"
 on:
   push:
@@ -117,9 +117,9 @@ jobs:
         shell: bash
         run: .automation/upload-docker.sh
 
-      #####################################
+      #########################
       # Run Linter test cases #
-      #####################################
+      #########################
       - name: Run Test Cases
         shell: bash
         run: |
@@ -128,9 +128,9 @@ jobs:
           docker run -e TEST_CASE_RUN=true -e OUTPUT_FORMAT=text -e OUTPUT_FOLDER=${GITHUB_SHA} -e OUTPUT_DETAIL=detailed -e GITHUB_SHA=${GITHUB_SHA} -e PAT="${{secrets.PAT}}" -e TEST_KEYWORDS="${TEST_KEYWORDS_TO_USE}" -e MEGALINTER_VOLUME_ROOT="${GITHUB_WORKSPACE}" -v "/var/run/docker.sock:/var/run/docker.sock:rw" -v ${GITHUB_WORKSPACE}:/tmp/lint oxsecurity/megalinter-only-${{ matrix.linter }}:${{ needs.prepare.outputs.tag }}
         timeout-minutes: 30
 
-      ##############################################
+      ##########################################
       # Check Docker image security with Trivy #
-      ##############################################
+      ##########################################
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
