@@ -38,8 +38,8 @@ def run_linters(linters):
     return linters
 
 
-# Main MegaLinter class, orchestrating files collection, linter processes and reporters
 class Megalinter:
+    """Main MegaLinter class, orchestrating files collection, linter processes and reporters"""
 
     # Constructor: Load global config, linters & compute file extensions
     def __init__(self, params=None):
