@@ -110,3 +110,4 @@ megalinter-reports/
 github_conf/
 
 Pipfile
+megalinter/.mypy_cache/
