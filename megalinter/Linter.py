@@ -1,23 +1,5 @@
 #!/usr/bin/env python3
-"""
-Template class for custom linters: any linter class in /linters folder must inherit from this class
-The following list of items can/must be overridden on custom linter local class:
-- field descriptor_id (required) ex: "JAVASCRIPT"
-- field name (optional) ex: "JAVASCRIPT_ES". If not set, language value is used
-- field linter_name (required) ex: "eslint"
-- field linter_url (required) ex: "https://eslint.org/"
-- field test_folder (optional) ex: "docker". If not set, language.lowercase() value is used
-- field config_file_name (optional) ex: ".eslintrc.yml". If not set, no default config file will be searched
-- field file_extensions (optional) ex: [".js"]. At least file_extension or file_names_regex must be set
-- field file_names_regex (optional) ex: ["Dockerfile(-.+)?"]. At least file_extension or file_names_regex must be set
-- method build_lint_command (optional) : Return CLI command to lint a file with the related linter
-                                         Default: linter_name + (if config_file(-c + config_file)) + config_file
-- method build_version_command (optional): Returns CLI command to get the related linter version.
-                                           Default: linter_name --version
-- method build_extract_version_regex (optional): Returns RegEx to extract version from version command output
-                                                 Default: "\\d+(\\.\\d+)+"
 
-"""
 import errno
 import json
 import logging
@@ -37,10 +19,29 @@ from megalinter.constants import DEFAULT_DOCKER_WORKSPACE_DIR
 
 
 class Linter:
+    """
+    Template class for custom linters: any linter class in /linters folder must inherit from this class
+    The following list of items can/must be overridden on custom linter local class:
+    - field descriptor_id (required) ex: "JAVASCRIPT"
+    - field name (optional) ex: "JAVASCRIPT_ES". If not set, language value is used
+    - field linter_name (required) ex: "eslint"
+    - field linter_url (required) ex: "https://eslint.org/"
+    - field test_folder (optional) ex: "docker". If not set, language.lowercase() value is used
+    - field config_file_name (optional) ex: ".eslintrc.yml". If not set, no default config file will be searched
+    - field file_extensions (optional) ex: [".js"]. At least file_extension or file_names_regex must be set
+    - field file_names_regex (optional) ex: ["Dockerfile(-.+)?"]. At least file_extension or file_names_regex must be set
+    - method build_lint_command (optional) : Return CLI command to lint a file with the related linter
+                                            Default: linter_name + (if config_file(-c + config_file)) + config_file
+    - method build_version_command (optional): Returns CLI command to get the related linter version.
+                                            Default: linter_name --version
+    - method build_extract_version_regex (optional): Returns RegEx to extract version from version command output
+                                                    Default: "\\d+(\\.\\d+)+"
+    """
+
     TEMPLATES_DIR = "/action/lib/.automation/"
 
-    # Constructor: Initialize Linter instance with name and config variables
     def __init__(self, params=None, linter_config=None):
+        """Constructor: Initialize Linter instance with name and config variables"""
         self.linter_version_cache = None
         self.linter_help_cache = None
         self.processing_order = 0
@@ -158,7 +159,7 @@ class Linter:
         self.disable_errors = (
             True
             if self.is_formatter is True
-            and not config.get("FORMATTERS_DISABLE_ERRORS", "true") == "false"
+            and config.get("FORMATTERS_DISABLE_ERRORS", "true") != "false"
             else True
             if config.get("DISABLE_ERRORS", "false") == "true"
             else False
@@ -235,7 +236,7 @@ class Linter:
             else:
                 self.apply_fixes = False
 
-            # Disable lint_all_other_linters_files=true if we are in a standalone linter docker image,
+            # Disable lint_all_other_linters_files=true if we are in a standalone linter Docker image,
             # because there are no other linters
             if (
                 self.lint_all_other_linters_files is True
@@ -350,8 +351,8 @@ class Linter:
             self.remote_config_file_to_delete = None
             self.remote_ignore_file_to_delete = None
 
-    # Enable or disable linter
     def manage_activation(self, params):
+        """Enable or disable linter"""
         # Default value is false in case ENABLE variables are used
         if len(params["enable_descriptors"]) > 0 or len(params["enable_linters"]) > 0:
             self.is_active = False
@@ -391,8 +392,8 @@ class Linter:
         if self.is_active is True and len(self.activation_rules) > 0:
             self.is_active = utils.check_activation_rules(self.activation_rules, self)
 
-    # Manage configuration variables
     def load_config_vars(self, params):
+        """Manage configuration variables"""
         # Configuration file name: try first NAME + _FILE_NAME, then LANGUAGE + _FILE_NAME
         # _CONFIG_FILE = _FILE_NAME (config renaming but keeping config ascending compatibility)
         if config.exists(self.name + "_CONFIG_FILE"):
@@ -628,8 +629,8 @@ class Linter:
                 self.name + "_DOCKER_IMAGE_VERSION"
             )
 
-    # Processes the linter
     def run(self):
+        """Processes the linter"""
         self.start_perf = perf_counter()
 
         # Initialize linter reports
@@ -1027,8 +1028,8 @@ class Linter:
     def before_lint_files(self):
         pass
 
-    # Build the CLI command to call to lint a file (can be overridden)
     def build_lint_command(self, file=None) -> list:
+        """Build the CLI command to call to lint a file (can be overridden)"""
         cmd = [self.cli_executable]
 
         # Add other lint cli arguments if defined
@@ -1101,8 +1102,8 @@ class Linter:
             cmd += self.files
         return self.manage_docker_command(cmd)
 
-    # Manage ignore arguments
     def get_ignore_arguments(self, cmd):
+        """Manage ignore arguments"""
         ignore_args = []
         if (
             self.ignore_file is not None
@@ -1121,8 +1122,8 @@ class Linter:
                 ignore_args += [self.cli_lint_ignore_arg_name, self.final_ignore_file]
         return ignore_args
 
-    # Manage SARIF arguments
     def get_sarif_arguments(self):
+        """Manage SARIF arguments"""
         if self.can_output_sarif is True and self.output_sarif is True:
             self.sarif_output_file = (
                 self.report_folder + os.sep + "sarif" + os.sep + self.name + ".sarif"
@@ -1132,8 +1133,8 @@ class Linter:
             return self.cli_sarif_args
         return []
 
-    # Find number of errors in linter stdout log
     def get_total_number_errors(self, stdout: str):
+        """Find number of errors in linter stdout log"""
         total_errors = 0
         # Count using SARIF output file
         if self.output_sarif is True:
@@ -1218,8 +1219,8 @@ class Linter:
         else:
             return 1
 
-    # Build the CLI command to get linter version (can be overridden if --version is not the way to get the version)
     def build_version_command(self):
+        """Build the CLI command to get linter version (can be overridden if --version is not the way to get the version)"""
         cmd = shlex.split(self.cli_executable_version)
         cli_absolute = shutil.which(cmd[0])
         if cli_absolute is not None:
@@ -1229,14 +1230,15 @@ class Linter:
             cmd += [self.cli_version_arg_name]
         return self.manage_docker_command(cmd)
 
-    # Build the CLI command to get linter version (can be overridden if --version is not the way to get the version)
     def build_help_command(self):
+        """Build the CLI command to get linter version (can be overridden if --version is not the way to get the version)"""
         cmd = [self.cli_executable_help]
         cmd += self.cli_help_extra_args
-        cmd += [self.cli_help_arg_name]
+        if self.cli_help_arg_name != "":
+            cmd += [self.cli_help_arg_name]
         return self.manage_docker_command(cmd)
 
-    # Provide additional details in text reporter logs
     # noinspection PyMethodMayBeStatic
     def complete_text_reporter_report(self, _reporter_self):
+        """Provide additional details in text reporter logs"""
         return []
