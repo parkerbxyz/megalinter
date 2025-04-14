@@ -418,9 +418,13 @@ def test_get_linter_help(linter, test_self):
     print("[" + linter.linter_name + "] help: " + help_txt)
     if help_txt == "ERROR":
         if test_self.__class__.__name__ == "sql_tsqllint_test":
-            raise unittest.SkipTest("Ugly workaround to avoid sql_tsqllint_test failure")
+            raise unittest.SkipTest(
+                "Ugly workaround to avoid sql_tsqllint_test failure"
+            )
         if test_self.__class__.__name__ == "markdown_markdownlint_test":
-            raise unittest.SkipTest("Workaround for markdownlint-cli2 exit code 2 with --help")
+            raise unittest.SkipTest(
+                "Workaround for markdownlint-cli2 exit code 2 with --help"
+            )
     test_self.assertFalse(
         help_txt == "ERROR", "Returned help invalid: [" + help_txt + "]"
     )
