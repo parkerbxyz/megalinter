@@ -45,7 +45,7 @@ linters:
   # ESLINT-PLUGIN-JSONC
   - class: EslintLinter
     disabled: true
-    disabled_reason: "Bug in eslint-plugin-jsonc: https://github.com/ota-meshi/eslint-plugin-jsonc/issues/328"
+    disabled_reason: "Bug in eslint-plugin-jsonc: <https://github.com/ota-meshi/eslint-plugin-jsonc/issues/328>"
     linter_name: eslint-plugin-jsonc
     linter_spdx_license: MIT
     can_output_sarif: true
@@ -151,7 +151,7 @@ linters:
           ARG NPM_ESLINT_VERSION=8.57.1
         - |-
           # renovate: datasource=npm depName=eslint-plugin-jsonc
-          ARG NPM_ESLINT_PLUGIN_JSONC_VERSION=2.20.0
+          ARG NPM_ESLINT_PLUGIN_JSONC_VERSION=2.21.0
         - |-
           # renovate: datasource=npm depName=@microsoft/eslint-formatter-sarif
           ARG NPM_MICROSOFT_ESLINT_FORMATTER_SARIF_VERSION=3.1.0

@@ -27,6 +27,7 @@ DEFAULT_SARIF_REPORT_FILE_NAME = "megalinter-report.sarif"
 DEFAULT_MARKDOWN_SUMMARY_REPORT_FILE_NAME = "megalinter-report.md"
 DEFAULT_SARIF_SCHEMA_URI = "https://json.schemastore.org/sarif-2.1.0.json"
 DEFAULT_SARIF_VERSION = "2.1.0"
+# MAJOR-RELEASE-IMPACTED
 DEFAULT_RELEASE = "v9"
 
 DEFAULT_DOCKERFILE_ARGS: list[str] = []
@@ -69,15 +70,15 @@ DEFAULT_DOCKERFILE_GEM_APK_PACKAGES = [
 ]
 
 DEFAULT_DOCKERFILE_PIP_ARGS = [
-    "# renovate: datasource=pypi depName=pip\nARG PIP_PIP_VERSION=25.2",
+    "# renovate: datasource=pypi depName=pip\nARG PIP_PIP_VERSION=25.3",
 ]
 
 DEFAULT_DOCKERFILE_PIPENV_ARGS = [
-    "# renovate: datasource=pypi depName=virtualenv\nARG PIP_VIRTUALENV_VERSION=20.34.0",
+    "# renovate: datasource=pypi depName=virtualenv\nARG PIP_VIRTUALENV_VERSION=20.35.4",
 ]
 
 DEFAULT_DOCKERFILE_RUST_ARGS = [
-    "# renovate: datasource=github-tags depName=rust-lang/rust\nARG RUST_RUST_VERSION=1.90.0",
+    "# renovate: datasource=github-tags depName=rust-lang/rust\nARG RUST_RUST_VERSION=1.91.1",
 ]
 
 DEFAULT_DOCKERFILE_FLAVOR_ARGS = [
